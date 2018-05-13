@@ -1,4 +1,5 @@
-page-home {
+.ios, .md {
+  page-home {
     #floating-panel {
       position: absolute;
       top: 10px;
@@ -16,3 +17,4 @@ page-home {
       height: 100%;
     }
   }
+}
