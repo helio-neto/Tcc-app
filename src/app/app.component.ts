@@ -14,13 +14,13 @@ export class MyApp {
 
   rootPage: any = WelcomePage;
 
-  pages: Array<{title: string, component: any}>;
+  pages: Array<{title: string, component: any, icon: string}>;
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
       this.initializeApp();
       this.pages = [
-        { title: 'Home', component: HomePage },
-        { title: 'Bem Vindo', component: WelcomePage }
+        { title: 'Bem-Vindo', component: WelcomePage, icon: 'home' },
+        { title: 'Home', component: HomePage, icon: 'star' }
       ];
   }
   // 
