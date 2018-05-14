@@ -8,9 +8,14 @@ import { WelcomePage } from '../pages/welcome/welcome';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { Geolocation } from '@ionic-native/geolocation';
+import { Network } from '@ionic-native/network';
 
 import { HttpClientModule } from '@angular/common/http';
+
 import { PubProvider } from '../providers/pub/pub';
+import { ConnectivityService } from '../providers/connectivity-service/connectivity-service';
+import { GoogleMapsProvider } from '../providers/google-maps/google-maps';
 
 @NgModule({
   declarations: [
@@ -33,7 +38,11 @@ import { PubProvider } from '../providers/pub/pub';
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    PubProvider
+    Geolocation,
+    Network,
+    PubProvider,
+    ConnectivityService,
+    GoogleMapsProvider
   ]
 })
 export class AppModule {}
