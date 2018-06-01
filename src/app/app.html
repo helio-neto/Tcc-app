@@ -5,13 +5,13 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
+  <ion-content class="background_menu">
     <img src="assets/imgs/beer_logo.jpg" class="menu-logo"/>
   <ion-list>
-      <ion-list-header>
-          Menu principal
+      <ion-list-header class="background_menu">
+          <p ion-text color="dark">Menu principal</p>
       </ion-list-header>
-    <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
+    <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" class="background_menu">
         <ion-icon item-left [name]="p.icon"></ion-icon>
       {{p.title}}
     </button>

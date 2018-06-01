@@ -141,5 +141,8 @@ export class HomePage {
     //       }
     //     });
     // }
-    
+    openPubDetails(pub: any) {
+      console.log(pub);
+      this.navCtrl.push('PubPage', pub);
+    }
   }

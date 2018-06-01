@@ -17,3 +17,6 @@
 .menu-logo {
     height: 80px;
 }
+.background_menu{
+    background-color: map-get($colors, background_menu);
+}

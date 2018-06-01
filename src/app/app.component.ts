@@ -11,7 +11,7 @@ import { WelcomePage } from '../pages/welcome/welcome';
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
-
+  
   rootPage: any = WelcomePage;
 
   pages: Array<{title: string, component: any, icon: string}>;
@@ -19,8 +19,8 @@ export class MyApp {
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
       this.initializeApp();
       this.pages = [
-        { title: 'Bem-Vindo', component: WelcomePage, icon: 'home' },
-        { title: 'Home', component: HomePage, icon: 'star' }
+        { title: 'Bem-Vindo', component: WelcomePage, icon: 'images' },
+        { title: 'Mapa', component: HomePage, icon: 'map' }
       ];
   }
   // 
