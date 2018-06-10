@@ -1,0 +1,33 @@
+page-map {
+
+    #map {
+        height: 100%;
+      }
+      #please-connect {
+        position: absolute;
+        background-color: map-get($colors, dark);;
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+     
+      #please-connect p {
+          color: map-get($colors, light);
+          font-weight: bold;
+          text-align: center;
+          position: relative;
+          font-size: 1.6em;
+          top: 30%;
+      }
+      .scroll {
+        height: 100%;
+    }
+      #iw-content .iw-title {
+          color: map-get($colors, primary);
+      }
+      #iw-content p{
+        color: blue;
+      }
+
+}

@@ -13,7 +13,7 @@
       </ion-card-content>
       <ion-list>
 
-          <ion-item>
+          <ion-item (click)="openMenu();">
               <ion-icon item-left name="beer"></ion-icon>
               <h3>Beers</h3>
               <ion-note item-right iont-text color="dark">{{pub.beers.length}}</ion-note>

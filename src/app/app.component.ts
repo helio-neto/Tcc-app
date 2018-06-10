@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { Nav, Platform, Events } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -16,12 +16,16 @@ export class MyApp {
 
   pages: Array<{title: string, component: any, icon: string}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events) {
       this.initializeApp();
       this.pages = [
         { title: 'Bem-Vindo', component: WelcomePage, icon: 'images' },
         { title: 'Mapa', component: HomePage, icon: 'map' }
       ];
+      
+      this.events.subscribe("PubPage", (pub)=>{
+        this.nav.push("PubPage", {pub : pub});
+      });
   }
   // 
   initializeApp() {

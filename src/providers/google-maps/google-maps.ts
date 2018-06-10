@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
-import { ToastController, NavController } from 'ionic-angular';
+import { ToastController, NavController, Events } from 'ionic-angular';
 import { App } from 'ionic-angular';
 
 import { ConnectivityService } from './../connectivity-service/connectivity-service';
@@ -23,8 +23,9 @@ export class GoogleMapsProvider {
   pubs: any[];
   erro: any;
   pubsAfter: any[];
+
   constructor(public splashScreen: SplashScreen, public http: HttpClient, public connectivityService: ConnectivityService, 
-              private pubProv: PubProvider, public geoLocation: Geolocation, public app: App,
+              private pubProv: PubProvider, public geoLocation: Geolocation, public app: App, public events: Events,
               private toastCtrl: ToastController) {
       
       console.log('Hello GoogleMapsProvider Provider');
@@ -55,38 +56,44 @@ export class GoogleMapsProvider {
   //
   initMap(): Promise<any> {    
       // this.mapInitialised = true;
-      
       return new Promise((resolve) => {
        
-        let opt = {maximumAge: 30000, timeout: 10000, enableHighAccuracy: true};
+        let opt = {maximumAge: 30000, timeout: 20000, enableHighAccuracy: true};
 
         this.geoLocation.getCurrentPosition(opt).then((position) => {
-          alert("Init Native Geo...");
+          alert("Estamos carregando sua posição...");
           this.userPos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-          
           let mapOptions = {
             center: this.userPos,
             zoom: 15,
             mapTypeId: google.maps.MapTypeId.ROADMAP
-        }
-        this.mapInitialised = true;  
-        this.splashScreen.hide();
-        this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-        let meMarker = new google.maps.Marker({
-            position: this.userPos,
-            title: "Eu"
-        });
+          }
+          
+          this.mapInitialised = true;  
+          this.splashScreen.hide();
+          this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
-        meMarker.setMap(this.map);
-        this.getPubs();
-        resolve(true);
-
+          let meMarker = new google.maps.Marker({
+              position: this.userPos,
+              title: "Eu"
+          });
+          let infoMe = new google.maps.InfoWindow({
+            content: "Estou aqui!"
+          });
+          google.maps.event.addListener(meMarker, 'click', () => {
+            infoMe.open(this.map, meMarker);
+          });
+          meMarker.setMap(this.map);
+          this.getPubs();
+          resolve(true);
         }).catch((error) => {
-          alert("Init fixed geo...");
+          // alert((error.message));
+          alert("Não conseguimos coletar sua localização atual.Por favor verifique se seu gps está habilitado");
           // navigator.geolocation.getCurrentPosition((data)=>{
-          //   alert(data.coords.latitude+" - "+data.coords.longitude);
+          //    alert(data.coords.latitude+" - "+data.coords.longitude);
           // });
           let latLng = new google.maps.LatLng(-30.0989177,-51.2469273);
+          this.userPos = latLng
           let mapOptions = {
             center: latLng,
             zoom: 15,
@@ -95,11 +102,17 @@ export class GoogleMapsProvider {
           this.mapInitialised = true;  
           this.splashScreen.hide();
           this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-          let meMarker = new google.maps.Marker({
-            position: latLng,
-            title: "Eu"
-          });
 
+          let meMarker = new google.maps.Marker({
+              position: latLng,
+              title: "Eu"
+          });
+          let infoMe = new google.maps.InfoWindow({
+            content: "Estou aqui!"
+          });
+          google.maps.event.addListener(meMarker, 'click', () => {
+            infoMe.open(this.map, meMarker);
+          });
           meMarker.setMap(this.map);
           this.getPubs();
           resolve(true);
@@ -169,11 +182,27 @@ export class GoogleMapsProvider {
             this.pubsAfter.sort((locationA, locationB) => {
               return locationA.distance - locationB.distance;
             });
-            console.log("Pubs After - ",this.pubsAfter);
+            console.log("Pubs After SORT by distance- ",this.pubsAfter);
+
             this.pinPubs(this.pubsAfter);
           },
           (erro) => this.erro = erro
      );
+  }
+  justGet(){ 
+    if(this.pubsAfter){
+        return Promise.resolve(this.pubsAfter);
+    }
+    return new Promise(resolve => {
+      this.pubProv.getPubs().subscribe(
+                data => {
+                this.pubsAfter = this.applyHaversine(data);
+                this.pubsAfter.sort((locationA, locationB) => {
+                    return locationA.distance - locationB.distance;
+                });
+            resolve(this.pubsAfter);
+        });
+    });
   }
   //
   pinPubs(pubs){
@@ -185,48 +214,41 @@ export class GoogleMapsProvider {
               title: pub.pubname,
               animation: google.maps.Animation.DROP
             });
-            let infocontent =  `<p id = "myid` + pub.pubname + `">Click</p>`;
+            //let infocontent =  `<p id = "myid` + pub.pubname + `">Click</p>`;
             let info2 = '<div id="iw-content">'+
                           '<h1 id="iw-title" class="iw-title">' + pub.pubname + '</h1>'+
                           '<p id = "myid' + pub.pubname + '">Ver detalhes</p>'+
                         '</div>';
-            let content = '<div id="iw-container">' +
-                        '<div class="iw-title">'+pub.pubname+'</div>' +
-                        '<div class="iw-content">' +
-                          '<div class="iw-subTitle">History</div>' +
-                          '<img src="'+ pub.photo +'" alt="Porcelain Factory of Vista Alegre" height="115" width="83">' +
-                          '<p ion-text color="secondary" id = "myid' + pub.pubname + '">Ver detalhes</p>'+
-                          '<div class="iw-subTitle">Contacts</div>' +
-                          '<p>VISTA ALEGRE ATLANTIS, SA<br>3830-292 Ílhavo - Portugal<br>'+
-                          '<br>Phone. +351 234 320 600<br>e-mail: geral@vaa.pt<br>www: www.myvistaalegre.com</p>'+
-                        '</div>' +
-                        '<div class="iw-bottom-gradient"></div>' +
-                      '</div>';
+            // let content = '<div id="iw-container">' +
+            //             '<div class="iw-title">'+pub.pubname+'</div>' +
+            //             '<div class="iw-content">' +
+            //               '<div class="iw-subTitle">History</div>' +
+            //               '<img src="'+ pub.photo +'" alt="Porcelain Factory of Vista Alegre" height="115" width="83">' +
+            //               '<p ion-text color="secondary" id = "myid' + pub.pubname + '">Ver detalhes</p>'+
+            //               '<div class="iw-subTitle">Contacts</div>' +
+            //               '<p>VISTA ALEGRE ATLANTIS, SA<br>3830-292 Ílhavo - Portugal<br>'+
+            //               '<br>Phone. +351 234 320 600<br>e-mail: geral@vaa.pt<br>www: www.myvistaalegre.com</p>'+
+            //             '</div>' +
+            //             '<div class="iw-bottom-gradient"></div>' +
+            //           '</div>';
             let infoWindow = new google.maps.InfoWindow({
-              content: info2,
-              //maxWidth: 350
+              content: info2
             });
 
             google.maps.event.addListener(pubMarker, 'click', () => {
-              //this.navCtrl.push('PubPage', pub);
-              //this.openPubDetails(pub);
               infoWindow.open(this.map, pubMarker);
-              //this.end = pubGeo;
-              //this.calculateAndDisplayRoute();
-              //console.log(pub.name);
             });
             google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
               document.getElementById('myid' + pub.pubname).addEventListener('click', () => {
-                this.navCtrl.push('PubPage', pub);
-                  });
-            });
-            
-            
+                //this.navCtrl.push('PubPage', pub);
+                this.events.publish("PubPage",pub);
+              });
+            });        
             pubMarker.setMap(this.map);
           }
     });
   }
-  //
+  // DEPRECATED
   get navCtrl(): NavController {
     return this.app.getActiveNav();
   }

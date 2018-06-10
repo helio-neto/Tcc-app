@@ -8,6 +8,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   templateUrl: 'list.html'
 })
 export class ListPage {
+  beers: any;
   selectedItem: any;
   icons: string[];
   items: Array<{title: string, note: string, icon: string}>;
@@ -15,7 +16,8 @@ export class ListPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,public splashScreen: SplashScreen) {
     // If we navigated to this page, we will have an item available as a nav param
     this.selectedItem = navParams.get('item');
-
+    this.beers = navParams.get('beers');
+    console.log("Beers .:.",this.beers);
     // Let's populate this page with some filler content for funzies
     this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
     'american-football', 'boat', 'bluetooth', 'build'];

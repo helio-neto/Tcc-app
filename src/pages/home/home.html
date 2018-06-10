@@ -6,9 +6,8 @@
     <ion-title>Home</ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content>
-  <div #pleaseConnect id="please-connect">
-    <p>Por favor se conecte a internet...</p>
-  </div>
-  <div #map id="map"></div>
-</ion-content>
+
+<ion-tabs color="light">
+  <ion-tab [root]="tab1Root" tabTitle="Mapa" tabIcon="navigate"></ion-tab>
+  <ion-tab [root]="tab2Root" tabTitle="Lista" tabIcon="list"></ion-tab>
+</ion-tabs>
