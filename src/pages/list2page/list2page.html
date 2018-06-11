@@ -1,14 +1,21 @@
 <ion-header>
- 
     <ion-navbar color="secondary">
       <ion-title>List</ion-title>
-    </ion-navbar>
-   
-  </ion-header>
+    </ion-navbar>  
+    <ion-searchbar
+    [(ngModel)]="query"
+    [showCancelButton]="true"
+    (ionInput)="onInput($event)"
+    (ionCancel)="onCancel($event)"
+    [cancelButtonText]="cancelText"
+    [animated]="true"
+    [debounce]=750>
+    </ion-searchbar>
+</ion-header>
    
    
   <ion-content>
-   
+  
     <ion-list>
         <button ion-item *ngFor="let pub of pubs" (click)="openPubDetails(pub)">
           <ion-avatar item-left>

@@ -1,9 +1,19 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title>map</ion-title>
   </ion-navbar>
-
+  <!-- <ion-toolbar>
+      <ion-searchbar [(ngModel)]="query" (ionInput)="search(query)"></ion-searchbar>
+  </ion-toolbar> -->
+  <ion-searchbar
+    [(ngModel)]="query"
+    [showCancelButton]="true"
+    (ionInput)="onInput($event)"
+    (ionCancel)="onCancel($event)"
+    [cancelButtonText]="cancelText"
+    [animated]="true"
+    [debounce]=750>
+    </ion-searchbar>
 </ion-header>
 
 
