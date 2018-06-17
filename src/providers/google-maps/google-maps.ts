@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
 import { ToastController, NavController, Events } from 'ionic-angular';
 import { App } from 'ionic-angular';
 
 import { ConnectivityService } from './../connectivity-service/connectivity-service';
+import { LocationsProvider } from '../locations/locations';
 import { PubProvider } from '../../providers/pub/pub';
 
 declare var google;
@@ -25,16 +25,13 @@ export class GoogleMapsProvider {
 
   pubmarkers: any = [];
   pubs: any[];
-
-  originData: any = [];
-  afterSearch: any = [];
   
   pubsAfter: any[];
   
-  constructor(public splashScreen: SplashScreen, public http: HttpClient, 
-              public connectivityService: ConnectivityService, private pubProv: PubProvider, 
-              public geoLocation: Geolocation, public app: App, public events: Events,
-              private toastCtrl: ToastController) {
+  constructor(public http: HttpClient, public connectivityService: ConnectivityService, 
+              public locationProv: LocationsProvider, public geoLocation: Geolocation, 
+              public app: App, public events: Events, private toastCtrl: ToastController,
+              public pubProv: PubProvider) {
 
   }
     // INITIALIZE GOOGLE MAPS SERVICES
@@ -58,7 +55,6 @@ export class GoogleMapsProvider {
           this.enableMap();
         }else {
           this.disableMap();
-          this.splashScreen.hide();
           resolve(true);
         }       
         this.addConnectivityListeners();   
@@ -68,80 +64,43 @@ export class GoogleMapsProvider {
     // GET USER POSITION
     // PIN USER ON MAP
     initMap(): Promise<any> {    
-      // this.mapInitialised = true;
+      this.mapInitialised = true;
       return new Promise((resolve) => {
-        
-        let opt = {maximumAge: 30000, timeout: 20000, enableHighAccuracy: true};
-        
-        this.geoLocation.getCurrentPosition(opt).then((position) => {
-          //alert("Estamos carregando sua posição...");
-          this.userPos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-          let mapOptions = {
-            center: this.userPos,
-            zoom: 15,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-          
-          this.mapInitialised = true;  
-          this.splashScreen.hide();
-          this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
-          let image = {
-            url: 'assets/icon/mapicons/user.png',
-            scaledSize: new google.maps.Size(40, 40)
-          };
-          let meMarker = new google.maps.Marker({
-            position: this.userPos,
-            title: "Eu",
-            map: this.map,
-            icon: image
+          this.locationProv.getUserLocation().then((data)=>{
+            this.userPos = new google.maps.LatLng(data['lat'], data['lng']);
+            let mapOptions = {
+              center: this.userPos,
+              zoom: 15,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+            this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+  
+            let image = {
+              url: 'assets/icon/mapicons/user.png',
+              scaledSize: new google.maps.Size(40, 40)
+            };
+            let meMarker = new google.maps.Marker({
+              position: this.userPos,
+              title: "Eu",
+              map: this.map,
+              icon: image
+            });
+            this.userMarker.push(meMarker);
+            let infoMe = new google.maps.InfoWindow({
+              content: "Estou aqui!"
+            });
+            google.maps.event.addListener(meMarker, 'click', () => {
+              infoMe.open(this.map, meMarker);
+            });
+            
+            resolve(true);
           });
-          this.userMarker.push(meMarker);
-          let infoMe = new google.maps.InfoWindow({
-            content: "Estou aqui!"
-          });
-          google.maps.event.addListener(meMarker, 'click', () => {
-            infoMe.open(this.map, meMarker);
-          });
-          
-          resolve(true);
-          
+      
         }).catch((error) => {
-          // alert((error.message));
-          alert("Não conseguimos coletar sua localização atual.Por favor verifique se seu gps está habilitado");
-          navigator.geolocation.getCurrentPosition((data)=>{
-            alert(data.coords.latitude+" - "+data.coords.longitude);
-          });
-          let latLng = new google.maps.LatLng(-30.0989177,-51.2469273);
-          this.userPos = latLng
-          let mapOptions = {
-            center: latLng,
-            zoom: 15,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-          this.mapInitialised = true;  
-          this.splashScreen.hide();
-          this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-          let image = {
-            url: 'assets/icons/mapicons/user.png',
-            scaledSize: new google.maps.Size(40, 40)
-          };
-          let meMarker = new google.maps.Marker({
-            position: this.userPos,
-            title: "Eu",
-            map: this.map,
-            icon: image
-          });
-          let infoMe = new google.maps.InfoWindow({
-            content: "Estou aqui!"
-          });
-          google.maps.event.addListener(meMarker, 'click', () => {
-            infoMe.open(this.map, meMarker);
-          });
-          resolve(true);
-          console.log('Not possible to use native geolocation - reason -> - '+ error);
+          
+          console.log('Not possible get geolocation - reason -> - '+ error);
         });
-      });
     }
     // Enable MAP on screen, 
     enableMap(): void {
@@ -201,6 +160,76 @@ export class GoogleMapsProvider {
       });    
       this.pubmarkers.push(marker);     
     }
+    //
+    removeMarker(){
+      for (var i = 0; i < this.pubmarkers.length; i++) {
+        this.pubmarkers[i].setMap(null);
+      }
+    }
+    // Pin Pubs on the MAP
+    // Params : 
+    // Pubs - 
+    pinPubs(pubs){
+        pubs.forEach(pub =>{
+          if(pub.location.lat, pub.location.lng){
+            let pubLocation = new google.maps.LatLng(pub.location.lat, pub.location.lng);
+            let image = {
+              url: 'assets/icon/mapicons/beer-cup1-1.svg',
+              scaledSize: new google.maps.Size(40, 40)
+            };
+            let pubMarker = new google.maps.Marker({
+              position: pubLocation,
+              title: pub.pubname,
+              animation: google.maps.Animation.DROP,
+              map: this.map,
+              icon: image
+            });
+            this.pubmarkers.push(pubMarker);
+            let info = '<div id="iw-content">'+
+            '<h1 id="iw-title" class="iw-title">' + pub.pubname + '</h1>'+
+            '<p id = "myid' + pub.pubname + '">Ver detalhes</p>'+
+            '</div>';
+            
+            let infoWindow = new google.maps.InfoWindow({
+              content: info
+            });
+            
+            google.maps.event.addListener(pubMarker, 'click', () => {
+              infoWindow.open(this.map, pubMarker);
+            });
+            google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
+              document.getElementById('myid' + pub.pubname).addEventListener('click', () => {
+                //this.navCtrl.push('PubPage', pub);
+                this.events.publish("PubPage",pub);
+              });
+            });        
+            
+          }
+        });
+    }
+    // DEPRECATED
+    get navCtrl(): NavController {
+        return this.app.getActiveNav();
+    }
+    // Load Google Places on the MAP
+    // Params to SET
+    // Location - 
+    // Radius - 
+    // Type - 
+    loadPlaces(){
+      let service = new google.maps.places.PlacesService(this.map);
+          service.nearbySearch({
+            location: this.userPos,
+            radius: 1000,
+            type: ['bar']
+          }, (results,status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+              for (var i = 0; i < results.length; i++) {
+                this.createMarker(results[i]);
+              }
+            }
+          });
+    }
     // Create google place icons
     // Params : 
     // Place -  
@@ -230,199 +259,6 @@ export class GoogleMapsProvider {
       });
       
     }
-    // Get pubs from DB, using Heroku API
-    // 
-    getPubs(){
-      this.pubProv.getPubs().subscribe(
-        (data) => {
-          this.pubs = data;
-          this.pubsAfter = this.applyHaversine(data);
-          this.pubsAfter.sort((locationA, locationB) => {
-            return locationA.distance - locationB.distance;
-          });
-          console.log("Pubs After SORT by distance- ",this.pubsAfter);
-          
-          this.pinPubs(this.pubsAfter);
-        },
-        (erro) => this.erro = erro
-      );
-    }
-    // Get pubs from DB, usingo Heroku API
-    // PROMISE 
-    justGet(){ 
-      if(this.pubsAfter){
-        return Promise.resolve(this.pubsAfter);
-      }
-      return new Promise(resolve => {
-        this.pubProv.getPubs().subscribe(
-          data => {
-            this.pubsAfter = this.applyHaversine(data);
-            this.pubsAfter.sort((locationA, locationB) => {
-              return locationA.distance - locationB.distance;
-            });
-            this.originData = this.pubsAfter;
-            resolve(this.pubsAfter);
-          });
-      });
-    }
-    // Search METHOD used in MAPS PAGE
-    // Params : 
-    // Query - (Beer name)
-    searchMap(query){
-      if(query == ''){
-        this.pubs = this.originData;
-        return Promise.resolve(this.pubs);     
-      }else{
-        return new Promise(resolve => {
-          this.pubProv.searchByBeer(query).subscribe(
-            (data) => {
-              this.pubs = data.result;
-              this.afterSearch = [];
-              this.pubsAfter.forEach((e1)=>this.pubs.forEach((e2)=> {
-                if(e1.pubname.toLowerCase() == e2.pubname.toLowerCase()){
-                  console.log(e1.pubname);
-                  this.afterSearch.push(e1);
-                }
-              }));
-              resolve(this.afterSearch);
-              //console.log("SEARCH RESULT ->",this.afterSearch);          
-            },
-            (erro) => this.erro = erro
-          );;
-        });
-        
-      }
-    }
-    // Pin Pubs on the MAP
-    // Params : 
-    // Pubs - 
-    pinPubs(pubs){
-        pubs.forEach(pub =>{
-          if(pub.location.lat, pub.location.lng){
-            let pubLocation = new google.maps.LatLng(pub.location.lat, pub.location.lng);
-            let image = {
-              url: 'assets/icon/mapicons/beer-cup1-1.svg',
-              scaledSize: new google.maps.Size(40, 40)
-            };
-            let pubMarker = new google.maps.Marker({
-              position: pubLocation,
-              title: pub.pubname,
-              animation: google.maps.Animation.DROP,
-              map: this.map,
-              icon: image
-            });
-            
-            let info = '<div id="iw-content">'+
-            '<h1 id="iw-title" class="iw-title">' + pub.pubname + '</h1>'+
-            '<p id = "myid' + pub.pubname + '">Ver detalhes</p>'+
-            '</div>';
-            
-            let infoWindow = new google.maps.InfoWindow({
-              content: info
-            });
-            
-            google.maps.event.addListener(pubMarker, 'click', () => {
-              infoWindow.open(this.map, pubMarker);
-            });
-            google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
-              document.getElementById('myid' + pub.pubname).addEventListener('click', () => {
-                //this.navCtrl.push('PubPage', pub);
-                this.events.publish("PubPage",pub);
-              });
-            });        
-            
-          }
-        });
-    }
-    clearPins(pubs){
-      pubs.forEach(pub =>{
-
-      });
-    }
-    // DEPRECATED
-    get navCtrl(): NavController {
-        return this.app.getActiveNav();
-    }
-    // Function to calculate distance between two points
-    // using latitude and longitude
-    // Params : 
-    // Pubs - 
-    applyHaversine(pubs){
-        
-        let usersLocation = {
-          lat: this.userPos.lat(),
-          lng: this.userPos.lng()
-        };
-        
-        pubs.map((pub) => {
-          let placeLocation = {
-            lat: pub.location.lat,
-            lng: pub.location.lng
-          };
-          
-          pub.distance = this.getDistanceBetweenPoints(
-            usersLocation,
-            placeLocation,
-            'km'
-          ).toFixed(2);
-        });
-        
-        return pubs;
-    }
-    // Calculate Distance Between points
-    // Params : 
-    // Start - 
-    // End - 
-    // Units - 
-    getDistanceBetweenPoints(start, end, units){
-        
-        let earthRadius = {
-          miles: 3958.8,
-          km: 6371
-        };
-        
-        let R = earthRadius[units || 'km'];
-        let lat1 = start.lat;
-        let lon1 = start.lng;
-        let lat2 = end.lat;
-        let lon2 = end.lng;
-        
-        let dLat = this.toRad((lat2 - lat1));
-        let dLon = this.toRad((lon2 - lon1));
-        let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        let d = R * c;
-        
-        return d;
-    }
-    // Convert measure to Radians
-    toRad(x){
-        return x * Math.PI / 180;
-    }
-    
-    // Load Google Places on the MAP
-    // Params to SET
-    // Location - 
-    // Radius - 
-    // Type - 
-    loadPlaces(){
-      let service = new google.maps.places.PlacesService(this.map);
-          service.nearbySearch({
-            location: this.userPos,
-            radius: 1000,
-            type: ['bar']
-          }, (results,status) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-              for (var i = 0; i < results.length; i++) {
-                this.createMarker(results[i]);
-              }
-            }
-          });
-    }
-      
       
     }
     //

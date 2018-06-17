@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { GoogleMapsProvider } from './../../providers/google-maps/google-maps';
 import { PubProvider } from '../../providers/pub/pub';
+import { LocationsProvider } from '../../providers/locations/locations';
 
 @IonicPage()
 @Component({
@@ -20,12 +21,12 @@ export class List2pagePage {
   cancelText: string = "Cancelar";
   searching: any = false;
   constructor(public navCtrl: NavController, public navParams: NavParams, public googleMaps: GoogleMapsProvider, 
-              public events: Events, public pubProvider: PubProvider) {
+              public events: Events, public pubProvider: PubProvider, public locationProv: LocationsProvider) {
   }
   // 
   ionViewDidLoad() {
     console.log('ionViewDidLoad List2pagePage');
-    this.pubs = this.googleMaps.pubsAfter;
+    this.pubs = this.locationProv.pubsAfter;
     this.originData = this.pubs;
     console.log(this.pubs);
   }

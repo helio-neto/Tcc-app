@@ -3,6 +3,7 @@ import { NavController, NavParams, Platform } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { PubProvider } from '../../providers/pub/pub';
+import { LocationsProvider } from '../../providers/locations/locations';
 import { GoogleMapsProvider } from './../../providers/google-maps/google-maps';
 
 @Component({
@@ -27,7 +28,7 @@ export class MapPage {
 
   constructor(public platform: Platform, public navCtrl: NavController, public splashScreen: SplashScreen, 
               public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, 
-              public navParams: NavParams) {
+              public navParams: NavParams, public locationsProv: LocationsProvider) {
 
               this.searchDisabled = true;
               this.saveDisabled = true;
@@ -37,9 +38,11 @@ export class MapPage {
   // Check Platform, Load GoogleMaps, Load Pubs, Pin User, Pin Pubs
   ionViewDidLoad() {
       console.log('ionViewDidLoad MapPage');
-      this.platform.ready().then(() => {
-        let mapLoaded = this.googleMaps.init(this.mapElement, this.pleaseConnect).then(() => {
-          let locationsLoaded = this.googleMaps.justGet().then((data)=>{
+      this.platform.ready().then(() => { 
+        let mapLoaded = this.googleMaps.init(this.mapElement, this.pleaseConnect).then((data) => {
+          this.splashScreen.hide();
+          let locationsLoaded = this.locationsProv.loadPubs().then((data)=>{
+            console.log("Locations ->",data);
             this.googleMaps.pinPubs(data);
               //this.googleMaps.loadPlaces();
           }).catch((error)=>{
@@ -48,12 +51,23 @@ export class MapPage {
         });
       });
   }
+  getUserPosition(){
+    this.locationsProv.getUserLocation().then(result=>{
+      console.log("Result ->",result);
+      alert("User ->"+JSON.stringify(result));
+    });
+    
+  }
   // SearchBar Input Event     
   onInput(event){
-      let sm = this.googleMaps.searchMap(this.query).then((data)=>{
-        console.log("DATA SEARCH MAP -> ",data);
-        this.googleMaps.pinPubs(data);
-      });      
+      this.googleMaps.removeMarker();
+      setTimeout(() => {
+        this.locationsProv.searchMap(this.query).then((data)=>{
+          console.log("DATA SEARCH MAP -> ",data);
+          this.googleMaps.pinPubs(data);
+        });
+      }, 1000);
+            
     //console.log(event);
   }
   // SearchBar Cancel Event
