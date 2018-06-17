@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PubProvider } from '../../providers/pub/pub';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -16,7 +15,7 @@ export class LocationsProvider {
   originData: any = [];
   searchData: any = [];
   
-  constructor(public http: HttpClient, private pubProv: PubProvider, public geoLocation: Geolocation) {
+  constructor(private pubProv: PubProvider, public geoLocation: Geolocation) {
     
   }
   // GET USER POSITION
@@ -50,12 +49,12 @@ export class LocationsProvider {
       });
     })
   }
-    // Get pubs from DB, usingo Heroku API
-    // PROMISE 
-    // get pubs from service
-    // apply Haversine to calculate distance between locations and user position
-    // RETURN -> PUBS ordered by distance from the user
-    loadPubs(){ 
+  // Get pubs from DB, usingo Heroku API
+  // PROMISE 
+  // get pubs from service
+  // apply Haversine to calculate distance between locations and user position
+  // RETURN -> PUBS ordered by distance from the user
+  loadPubs(){ 
       if(this.pubsAfter){
         return Promise.resolve(this.pubsAfter);
       }
@@ -71,11 +70,11 @@ export class LocationsProvider {
             resolve(this.pubsAfter);
           });
       });
-    }
-    // Search METHOD used in MAPS PAGE
-    // Params : 
-    // Query - (Beer name)
-    searchMap(query){
+  }
+  // Search METHOD used in MAPS PAGE
+  // Params : 
+  // Query - (Beer name)
+  searchMap(query){
       if(query == ''){
         this.pubs = this.originData;
         return Promise.resolve(this.pubs);     
@@ -104,12 +103,12 @@ export class LocationsProvider {
         });
         
       }
-    }
-    // Function to calculate distance between two points
-    // using latitude and longitude
-    // Params : 
-    // Pubs - 
-    applyHaversine(pubs){
+  }
+  // Function to calculate distance between two points
+  // using latitude and longitude
+  // Params : 
+  // Pubs - 
+  applyHaversine(pubs){
       
       let usersLocation = {
         lat: this.userPos.lat,
@@ -130,13 +129,13 @@ export class LocationsProvider {
       });
       
       return pubs;
-    }
-    // Calculate Distance Between points
-    // Params : 
-    // Start - 
-    // End - 
-    // Units - 
-    getDistanceBetweenPoints(start, end, units){
+  }
+  // Calculate Distance Between points
+  // Params : 
+  // Start - 
+  // End - 
+  // Units - 
+  getDistanceBetweenPoints(start, end, units){
       
       let earthRadius = {
         miles: 3958.8,
@@ -159,11 +158,11 @@ export class LocationsProvider {
       let d = R * c;
       
       return d;
-    }
-    // Convert measure to Radians
-    toRad(x){
-      return x * Math.PI / 180;
-    }
-    
   }
+  // Convert measure to Radians
+  toRad(x){
+      return x * Math.PI / 180;
+  }
+    
+}
   

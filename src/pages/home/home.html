@@ -3,11 +3,17 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Home</ion-title>
+    <ion-title>Mapa</ion-title>
+    <ion-buttons end>
+        <button ion-button icon-only (click)="searchBar()">
+          <ion-icon name="search"></ion-icon>
+        </button>
+      </ion-buttons>
   </ion-navbar>
+  
 </ion-header>
 
-<ion-tabs color="light">
+<ion-tabs #myTabs color="light">
   <ion-tab [root]="tab1Root" tabTitle="Mapa" tabIcon="navigate"></ion-tab>
   <ion-tab [root]="tab2Root" tabTitle="Lista" tabIcon="list"></ion-tab>
 </ion-tabs>

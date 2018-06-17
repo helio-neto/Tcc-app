@@ -1,8 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Network } from '@ionic-native/network';
 import { Platform } from 'ionic-angular';
-import { ToastController } from 'ionic-angular';
 
 import 'rxjs/add/operator/map';
 
@@ -15,6 +13,7 @@ export class ConnectivityService {
     console.log('ConnectivityService Provider');
   }
   // Check if the app is running on a device or browser
+  // True = device, False = Browser
   isDevice(): boolean {
     return this.platform.is('cordova');
   }
@@ -28,11 +27,11 @@ export class ConnectivityService {
       return navigator.onLine;
     }
   }
-  //
+  // Watch user get Online
   watchOnline(): any {
     return this.network.onConnect();
   }
-  //
+  // Watch user get offline
   watchOffline(): any {
     return this.network.onDisconnect();
   } 

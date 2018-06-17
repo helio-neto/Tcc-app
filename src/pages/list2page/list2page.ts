@@ -17,7 +17,7 @@ export class List2pagePage {
   erro: any;
   query: string = '';
   places: any = [];
-  searchDisabled: boolean = true;
+  searchON: boolean = false;
   cancelText: string = "Cancelar";
   searching: any = false;
   constructor(public navCtrl: NavController, public navParams: NavParams, public googleMaps: GoogleMapsProvider, 
@@ -26,6 +26,9 @@ export class List2pagePage {
   // 
   ionViewDidLoad() {
     console.log('ionViewDidLoad List2pagePage');
+    this.events.subscribe("search",(search)=>{
+        this.searchON = search;
+    });
     this.pubs = this.locationProv.pubsAfter;
     this.originData = this.pubs;
     console.log(this.pubs);

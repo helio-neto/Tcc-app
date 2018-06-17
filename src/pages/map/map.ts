@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef} from '@angular/core';
-import { NavController, NavParams, Platform } from 'ionic-angular';
+import { NavController, NavParams, Platform, Events } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { PubProvider } from '../../providers/pub/pub';
@@ -21,17 +21,15 @@ export class MapPage {
   placesService: any;
   query: string = '';
   places: any = [];
-  searchDisabled: boolean;
+  searchON: boolean;
   saveDisabled: boolean;
   location: any; 
   cancelText: string = "Cancelar";
 
   constructor(public platform: Platform, public navCtrl: NavController, public splashScreen: SplashScreen, 
-              public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, 
+              public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, public event: Events, 
               public navParams: NavParams, public locationsProv: LocationsProvider) {
 
-              this.searchDisabled = true;
-              this.saveDisabled = true;
   }
   
   // On View Load
@@ -39,6 +37,9 @@ export class MapPage {
   ionViewDidLoad() {
       console.log('ionViewDidLoad MapPage');
       this.platform.ready().then(() => { 
+        this.event.subscribe("search",(search)=>{
+          this.searchON = search;
+        });
         let mapLoaded = this.googleMaps.init(this.mapElement, this.pleaseConnect).then((data) => {
           this.splashScreen.hide();
           let locationsLoaded = this.locationsProv.loadPubs().then((data)=>{
