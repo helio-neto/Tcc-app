@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef} from '@angular/core';
 import { NavController, NavParams, Platform } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -24,17 +24,21 @@ export class MapPage {
   saveDisabled: boolean;
   location: any; 
   cancelText: string = "Cancelar";
+
   constructor(public platform: Platform, public navCtrl: NavController, public splashScreen: SplashScreen, 
-    public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, public navParams: NavParams, public zone: NgZone) {
-      this.searchDisabled = true;
-        this.saveDisabled = true;
-    }
-    
-    ionViewDidLoad() {
+              public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, 
+              public navParams: NavParams) {
+
+              this.searchDisabled = true;
+              this.saveDisabled = true;
+  }
+  
+  // On View Load
+  // Check Platform, Load GoogleMaps, Load Pubs, Pin User, Pin Pubs
+  ionViewDidLoad() {
       console.log('ionViewDidLoad MapPage');
       this.platform.ready().then(() => {
         let mapLoaded = this.googleMaps.init(this.mapElement, this.pleaseConnect).then(() => {
-          alert("Map Loaded");
           let locationsLoaded = this.googleMaps.justGet().then((data)=>{
             this.googleMaps.pinPubs(data);
               //this.googleMaps.loadPlaces();
@@ -43,20 +47,19 @@ export class MapPage {
           });
         });
       });
-    }
-    
-    
-    onInput(event){
+  }
+  // SearchBar Input Event     
+  onInput(event){
       let sm = this.googleMaps.searchMap(this.query).then((data)=>{
-        
         console.log("DATA SEARCH MAP -> ",data);
         this.googleMaps.pinPubs(data);
-      });
-      
-      //console.log(event);
-    }
-    onCancel(event){
-      console.log(event);
-    }
+      });      
+    //console.log(event);
   }
+  // SearchBar Cancel Event
+  onCancel(event){
+      console.log(event);
+  }
+  
+}
   
