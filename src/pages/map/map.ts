@@ -29,7 +29,7 @@ export class MapPage {
   constructor(public platform: Platform, public navCtrl: NavController, public splashScreen: SplashScreen, 
               public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, public event: Events, 
               public navParams: NavParams, public locationsProv: LocationsProvider) {
-
+                
   }
   
   // On View Load

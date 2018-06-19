@@ -42,4 +42,10 @@ page-map {
         line-height: 30px;
         padding-left: 10px;
       }
+      #iw-content .iw-title {
+        color: map-get($colors, primary);
+    }
+    #iw-content p{
+      color: blue;
+    }
 }
