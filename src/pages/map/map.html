@@ -1,10 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title></ion-title>
-  </ion-navbar>
-  <ion-row>
-      <ion-col col-12>
-          <ion-searchbar *ngIf="searchON"
+    <ion-searchbar *ngIf="searchON"
           [(ngModel)]="query"
           [showCancelButton]="true"
           (ionInput)="onInput($event)"
@@ -13,10 +10,12 @@
           [animated]="true"
           [debounce]=750>
           </ion-searchbar>
-      </ion-col>
-     
-    </ion-row>
-  
+          <ion-buttons end>
+            <button ion-button icon-only (click)="searchBarMap()">
+              <ion-icon name="search"></ion-icon>
+            </button>
+          </ion-buttons>
+  </ion-navbar>
 </ion-header>
 <ion-content>    
   <div #pleaseConnect id="please-connect">

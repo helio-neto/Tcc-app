@@ -68,4 +68,12 @@ export class List2pagePage {
     this.pubs = this.originData;
     console.log("Cancel Event",event);
   }
+  searchBarList(){
+    if(this.searchON){
+      this.searchON = false;
+    }else{
+      this.searchON = true;
+    }
+    this.events.publish("searchHome",this.searchON);
+ }
 }

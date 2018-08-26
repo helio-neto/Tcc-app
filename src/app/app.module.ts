@@ -1,4 +1,3 @@
-
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
@@ -6,6 +5,7 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { MapPage } from '../pages/map/map';
+import { ListPage } from './../pages/list/list';
 import { List2pagePage } from './../pages/list2page/list2page';
 import { WelcomePage } from '../pages/welcome/welcome';
 
@@ -25,9 +25,10 @@ import { LocationsProvider } from '../providers/locations/locations';
   declarations: [
     MyApp,
     HomePage,
+    WelcomePage,
     MapPage,
-    List2pagePage,
-    WelcomePage
+    ListPage,
+    List2pagePage
   ],
   imports: [
     BrowserModule,
@@ -38,9 +39,10 @@ import { LocationsProvider } from '../providers/locations/locations';
   entryComponents: [
     MyApp,
     HomePage,
+    WelcomePage,
     MapPage,
-    List2pagePage,
-    WelcomePage
+    ListPage,
+    List2pagePage
   ],
   providers: [
     StatusBar,

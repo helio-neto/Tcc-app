@@ -27,7 +27,7 @@ export class MapPage {
   cancelText: string = "Cancelar";
 
   constructor(public platform: Platform, public navCtrl: NavController, public splashScreen: SplashScreen, 
-              public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, public event: Events, 
+              public pubProvider: PubProvider, public googleMaps: GoogleMapsProvider, public events: Events, 
               public navParams: NavParams, public locationsProv: LocationsProvider) {
                 
   }
@@ -37,7 +37,7 @@ export class MapPage {
   ionViewDidLoad() {
       console.log('ionViewDidLoad MapPage');
       this.platform.ready().then(() => { 
-        this.event.subscribe("search",(search)=>{
+        this.events.subscribe("search",(search)=>{
           this.searchON = search;
         });
         let mapLoaded = this.googleMaps.init(this.mapElement, this.pleaseConnect).then((data) => {
@@ -75,6 +75,14 @@ export class MapPage {
   onCancel(event){
       console.log(event);
   }
+  searchBarMap(){
+    if(this.searchON){
+      this.searchON = false;
+    }else{
+      this.searchON = true;
+    }
+    this.events.publish("searchHome",this.searchON);
+ }
   
 }
   
