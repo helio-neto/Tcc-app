@@ -1,0 +1,59 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Cadastre-se</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <ion-row>
+        <ion-col>
+          <img src="../../assets/imgs/beerslide3.jpg" />
+        </ion-col>
+      </ion-row>
+      <p *ngIf="submitAttempt" style="color: #ea6153;">Please fill out all details accurately.</p>
+ 
+<ion-list no-lines>
+ 
+    <form [formGroup]="pubForm">
+ 
+        <ion-item>
+            <ion-label floating>Nome Pub / Estabelecimento</ion-label>
+            <ion-input formControlName="name" type="text" [class.invalid]="!pubForm.controls['name'].valid && (pubForm.controls['name'].dirty || submitAttempt)"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!pubForm.controls['name'].valid  && (pubForm.controls['name'].dirty || submitAttempt)">
+            <p>Por favor entre um nome válido.</p>
+        </ion-item>
+        <span formGroupName="location">
+            <ion-item>
+                <ion-label floating>Endereço</ion-label>
+                <ion-input type="text" formControlName="street"></ion-input>
+             </ion-item>
+             <ion-item>
+                <ion-label floating>Bairro</ion-label>
+                <ion-input type="text" formControlName="hood"></ion-input>
+             </ion-item>
+        </span>
+        <!-- <ion-item>
+            <ion-label floating>Endereço</ion-label>
+            <ion-input formControlName="street" type="text" [class.invalid]="!pubForm.controls['location']['street'].valid && (pubForm.controls['location']['street'].dirty || submitAttempt)"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!pubForm.controls['location']['street'].valid  && (pubForm.controls['location']['street'].dirty || submitAttempt)">
+            <p>Por favor entre um endereço válido.</p>
+        </ion-item> -->
+ 
+        <!-- <ion-item>
+            <ion-label floating>Nº</ion-label>
+            <ion-input formControlName="number" type="number" [class.invalid]="!pubForm.controls['number'].valid && (pubForm.controls['number'].dirty || submitAttempt)"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!pubForm.controls['address'].valid  && (pubForm.controls['address'].dirty || submitAttempt)">
+            <p>Por favor informe um número válido .</p>
+        </ion-item> -->
+ 
+    </form>
+ 
+</ion-list>
+<button ion-button full color="primary" (click)="save()">Create Account!</button>
+</ion-content>

@@ -15,14 +15,26 @@ export class MyApp {
   rootPage: any = WelcomePage;
 
   pages: Array<{title: string, component: any, icon: string}>;
+  accountMenuItems: Array<{title: string, component: any, icon: string}>;
+  helpMenuItems: Array<{title: string, component: any, icon: string}>;
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public events: Events) {
       this.initializeApp();
+
       this.pages = [
         { title: 'Bem-Vindo', component: WelcomePage, icon: 'images' },
-        { title: 'Mapa', component: HomePage, icon: 'map' }
+        { title: 'Cervejas / Pubs', component: HomePage, icon: 'map' }
       ];
       
+      this.accountMenuItems = [
+        {title: 'Cadastro', component: "SignupPage", icon: 'ios-contact'},
+        {title: 'Login', component: WelcomePage, icon: 'log-in'},
+    ];
+
+    this.helpMenuItems = [
+        {title: 'Welcome', component: WelcomePage, icon: 'bookmark'},
+        {title: 'About', component: WelcomePage, icon: 'information-circle'},
+    ];
       this.events.subscribe("PubPage", (pub)=>{
         this.nav.push("PubPage", {pub : pub});
       });

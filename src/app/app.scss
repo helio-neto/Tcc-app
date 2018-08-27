@@ -16,6 +16,7 @@
 // automatically applied to the <body> element in the app.
 .menu-logo {
     height: 80px;
+    margin: 0 0 0 100px;
 }
 .background_menu{
     background-color: map-get($colors, background_menu);

@@ -1,4 +1,4 @@
-<ion-menu [content]="content">
+<!-- <ion-menu [content]="content">
   <ion-header>
     <ion-toolbar>
       <ion-title>Menu</ion-title>
@@ -18,7 +18,55 @@
   </ion-list>
 </ion-content>
 
-</ion-menu>
+</ion-menu> -->
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
-<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+<!-- <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav> -->
+
+<ion-menu [content]="content">
+    <ion-header>
+        <ion-toolbar>
+          <ion-title>Bem-Vindo</ion-title>
+        </ion-toolbar>
+      </ion-header>
+    <ion-content class="background_menu">
+  
+        <img src="assets/imgs/beer_logo.jpg" class="menu-logo"/>
+  
+      <ion-list>
+        <ion-list-header class="background_menu">
+          HasBeer
+        </ion-list-header>
+        <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)" class="background_menu">
+            <ion-icon item-left [name]="p.icon"></ion-icon>
+          {{p.title}}
+        </button>
+      </ion-list>
+  
+      <!-- <ion-list>
+        <ion-list-header>
+          Help
+        </ion-list-header>
+        <button menuClose ion-item *ngFor="let menuItem of helpMenuItems" (click)="openPage(menuItem)">
+          <ion-icon item-left [name]="menuItem.icon"></ion-icon>
+          {{menuItem.title}}
+        </button>
+      </ion-list> -->
+  
+      <ion-list>
+        <ion-list-header class="background_menu">
+          Pub / Estabelecimento
+        </ion-list-header>
+        <button menuClose ion-item *ngFor="let menuItem of accountMenuItems" (click)="openPage(menuItem)" class="background_menu">
+          <ion-icon item-left [name]="menuItem.icon"></ion-icon>
+          {{menuItem.title}}
+        </button>
+      </ion-list>
+  
+    </ion-content>
+  
+  </ion-menu>
+  
+  <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
+  <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+  
