@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PubProvider } from '../../providers/pub/pub';
 import { Geolocation } from '@ionic-native/geolocation';
+import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
 
 @Injectable()
 export class LocationsProvider {
@@ -66,7 +67,7 @@ export class LocationsProvider {
               return locationA.distance - locationB.distance;
             });
             this.originData = this.pubsAfter;
-            console.log("Locations Loaded!");
+            console.log("Pubs Loaded!");
             resolve(this.pubsAfter);
           });
       });

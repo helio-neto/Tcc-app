@@ -45,19 +45,19 @@ export class MapPage {
           let locationsLoaded = this.locationsProv.loadPubs().then((data)=>{
             console.log("Locations ->",data);
             this.googleMaps.pinPubs(data);
-              //this.googleMaps.loadPlaces();
+            //this.googleMaps.loadPlaces();
           }).catch((error)=>{
             console.log(error)
           });
         });
       });
   }
+  // 
   getUserPosition(){
     this.locationsProv.getUserLocation().then(result=>{
       console.log("Result ->",result);
       alert("User ->"+JSON.stringify(result));
     });
-    
   }
   // SearchBar Input Event     
   onInput(event){
@@ -67,8 +67,7 @@ export class MapPage {
           console.log("DATA SEARCH MAP -> ",data);
           this.googleMaps.pinPubs(data);
         });
-      }, 1000);
-            
+      }, 1000);    
     //console.log(event);
   }
   // SearchBar Cancel Event

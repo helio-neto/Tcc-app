@@ -257,9 +257,58 @@ export class GoogleMapsProvider {
       google.maps.event.addListener(placeMarker, 'click', () => {
         infoPlace.open(this.map, placeMarker);
       });
-      
     }
-      
+    // 
+    getAddressGeoCode(addr): Promise<any>{
+      return new Promise((resolve,reject)=>{
+        let geocoder = new google.maps.Geocoder();
+        // let location = {
+        //   lat: "",
+        //   lng: "",
+        //   uf: "",
+        //   city: "",
+        //   hood: "",
+        //   street: addr,
+          
+        // };
+        let location =  {
+          street: addr,
+          lat: "",
+          lng: "",
+          city: "",
+          uf: "",
+          hood: ""
+        };
+            geocoder.geocode({ address: addr }, (results, status) => {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    let address_components = results[0].address_components; 
+                    location.lat = results[0].geometry.location.lat();
+                    location.lng = results[0].geometry.location.lng();
+
+                    address_components.forEach(element => {
+                      if (element.types[0] == 'administrative_area_level_1' ) {
+                        location.uf = element.short_name;
+                      }
+                      if (element.types[0] == 'administrative_area_level_2' ) {
+                        location.city = element.short_name;
+                      }
+                      if (element.types[1] == 'sublocality' || element.types[2] == 'sublocality_level_1') {
+                        location.hood = element.short_name;
+                      }
+                      if (element.types[0] == 'postal_code') {
+                        location.street += " - "+element.short_name;
+                      }
+                      // if (element.types[0] == 'country') {
+                      //   location.country = element.short_name;
+                      // }
+                    });
+                    resolve(location);
+                } else {
+                    reject(status);
+                }
+            });
+      })
     }
-    //
+}
+
     
