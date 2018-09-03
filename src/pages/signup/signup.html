@@ -1,6 +1,9 @@
 <ion-header>
 
   <ion-navbar>
+        <button ion-button menuToggle>
+                <ion-icon name="menu"></ion-icon>
+              </button>
     <ion-title>Cadastre seu Pub</ion-title>
   </ion-navbar>
 
@@ -51,19 +54,24 @@
             <ion-label floating>Informações do Pub</ion-label>
             <ion-textarea formControlName="info" type="text" [class.invalid]="!pubForm.controls['info'].valid && (pubForm.controls['info'].dirty || submitAttempt)"></ion-textarea>
         </ion-item>
-        
         <ion-item>
-            <ion-label floating>E-mail</ion-label>
+            <ion-label floating>Foto</ion-label>
+            <ion-input formControlName="photo" type="text" [class.invalid]="!pubForm.controls['photo'].valid && (pubForm.controls['photo'].dirty || submitAttempt)"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>E-mail (Login)</ion-label>
             <ion-input formControlName="email" type="email" [class.invalid]="!pubForm.controls['email'].valid && (pubForm.controls['email'].dirty || submitAttempt)"></ion-input>
         </ion-item>
         <ion-item *ngIf="!pubForm.controls['email'].valid  && (pubForm.controls['email'].dirty || submitAttempt)">
             <p>* Por favor entre um email válido.</p>
         </ion-item>
         <ion-item>
-            <ion-label floating>Foto</ion-label>
-            <ion-input formControlName="photo" type="text" [class.invalid]="!pubForm.controls['photo'].valid && (pubForm.controls['photo'].dirty || submitAttempt)"></ion-input>
+            <ion-label floating>Senha</ion-label>
+            <ion-input formControlName="password" type="password" [class.invalid]="!pubForm.controls['password'].valid && (pubForm.controls['password'].dirty || submitAttempt)"></ion-input>
         </ion-item>
-        
+        <ion-item *ngIf="!pubForm.controls['password'].valid  && (pubForm.controls['password'].dirty || submitAttempt)">
+            <p>* Por favor informe uma senha.</p>
+        </ion-item>
         <span formGroupName="location" no-lines>
             <ion-list>
                 <ion-item>
@@ -84,7 +92,7 @@
     </form>
  
 </ion-list>
-<button ion-button full *ngIf="addressConfirm"
+<button ion-button full [disabled]="!addressConfirm"
         color="primary" (click)="save()">Entrar no HasBeer!
 </button>
 </ion-content>

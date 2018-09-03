@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PubProvider } from '../../providers/pub/pub';
 import { Geolocation } from '@ionic-native/geolocation';
-import { PromiseObservable } from 'rxjs/observable/PromiseObservable';
 
 @Injectable()
 export class LocationsProvider {

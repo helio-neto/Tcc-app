@@ -5,7 +5,6 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { MapPage } from '../pages/map/map';
-import { ListPage } from './../pages/list/list';
 import { List2pagePage } from './../pages/list2page/list2page';
 import { WelcomePage } from '../pages/welcome/welcome';
 
@@ -13,6 +12,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Network } from '@ionic-native/network';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -27,13 +27,13 @@ import { LocationsProvider } from '../providers/locations/locations';
     HomePage,
     WelcomePage,
     MapPage,
-    ListPage,
     List2pagePage
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -41,7 +41,6 @@ import { LocationsProvider } from '../providers/locations/locations';
     HomePage,
     WelcomePage,
     MapPage,
-    ListPage,
     List2pagePage
   ],
   providers: [

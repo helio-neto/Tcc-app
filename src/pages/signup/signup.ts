@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
-import { Validators, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { IonicPage, NavController, NavParams, AlertController, ToastController } from 'ionic-angular';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { GoogleMapsProvider } from './../../providers/google-maps/google-maps';
-
+import { PubProvider } from './../../providers/pub/pub';
+import { WelcomePage } from './../welcome/welcome';
+import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
@@ -16,8 +18,9 @@ export class SignupPage {
   addressConfirm: boolean = false;
   pub: any;
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public navParams: NavParams, 
-              private formBuilder: FormBuilder,public googleMapsProvider: GoogleMapsProvider ) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public toastCtrl: ToastController,
+              public navParams: NavParams, private formBuilder: FormBuilder,public googleMapsProvider: GoogleMapsProvider, 
+              public pubprov:PubProvider, private storage: Storage ) {
     this.pubForm = this.formBuilder.group({
       pubname: ['', Validators.required],
       location: formBuilder.group({
@@ -32,7 +35,8 @@ export class SignupPage {
       phone: [''],
       celphone: ['', Validators.required],
       info: [''],
-      email: ['',Validators.email],
+      email: ['',Validators.compose([Validators.required, Validators.email]) ],
+      password:['',Validators.compose([Validators.required, Validators.minLength(8)])],
       photo: ['']
     });
   }
@@ -60,13 +64,36 @@ export class SignupPage {
           handler: () => {
             this.addressConfirm = true;
             this.pubForm.get("location.street").updateValueAndValidity();
+            this.pubForm.get("location").setValue({ 
+                street: address.street,
+                hood: address.hood,
+                lat: address.lat,
+                lng: address.lng,
+                city: address.city,
+                uf: address.uf    
+            });
           }
         }
       ]
     });
     alert.present();
   }
-
+  // 
+  presentToast(message,cssStyle) {
+    let toast = this.toastCtrl.create({
+      message: message,
+      duration: 4000,
+      position: 'bottom',
+      cssClass: cssStyle
+    });
+  
+    toast.onDidDismiss(() => {
+      
+    });
+  
+    toast.present();
+  }
+  // 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SignupPage');
   }
@@ -83,15 +110,32 @@ export class SignupPage {
   }
   // 
   save(){
-
     if(!this.pubForm.valid){
         console.log("Formulário inválido");   
         this.submitAttempt = true; 
     }
     else {
       this.submitAttempt = false;
-        console.log("success!")
-        console.log("Form ->",this.pubForm.value);
+      console.log("success!")
+      console.log("Form ->",this.pubForm.value);
+      this.pubprov.register(this.pubForm.value).subscribe(
+          (res)=>{
+            if(res.status == "success"){
+              let message = `${res.message}`;
+              this.presentToast(message,"success");
+              this.storage.set('userdata',{
+                pubid: res.pubid,
+                isLoggedIn: true
+              })
+              setTimeout(() => {
+                  this.navCtrl.setRoot(WelcomePage);
+              }, 4000);
+            }else{
+              let message = `${res.message}`;
+              this.presentToast(message,"error");
+            }
+          }
+        );
     }
   }
   
